@@ -761,20 +761,18 @@ function twentytwenty_get_elements_array() {
 
 add_filter('register_post_type_args', function( $args, $post_type) {
 
-	if ('ortalio_media' === $post_type) {
-		$args['show_in_graphql'] = true;
-		$args['graphql_single_name'] = 'OrtalioMedia';
-		$args['graphql_plural_name'] = 'OrtalioMedia';
+	switch($post_type) {
+		case 'ortalio_media':
+			$args['show_in_graphql'] = true;
+			$args['graphql_single_name'] = 'OrtalioMedia';
+			$args['graphql_plural_name'] = 'OrtalioMedia';
+			break;
+		case 'ortalio_setting':
+			$args['show_in_graphql'] = true;
+			$args['graphql_single_name'] = 'OrtalioSetting';
+			$args['graphql_plural_name'] = 'OrtalioSetting';
 	}
-
+	
 	return $args;
 
 }, 10, 2 );
-
-add_filter( 'rest_post_collection_params', 'my_prefix_add_rest_orderby_params', 10, 1 );
-
-function my_prefix_add_rest_orderby_params( $params ) {
-    $params['orderby']['enum'][] = 'menu_order';
-
-    return $params;
-}
