@@ -785,3 +785,78 @@ add_filter('register_post_type_args', function( $args, $post_type) {
 add_filter( 'rest_authentication_errors', function( $result ) {
 	die;
 });
+
+add_action( 'do_graphql_request', 'allow_only_my_queries', 10, 1 );
+
+function allow_only_my_queries( $query ) {
+	if ( ! defined( 'GRAPHQL_HTTP_REQUEST' ) || true !== GRAPHQL_HTTP_REQUEST ) {
+		return;
+	}
+
+	$ortalioMediaQuery = '{
+		ortalioMedia(first: 100) {
+		  nodes {
+			id
+			slug
+			ortalioMediaField {
+			  title
+			  content
+			  fieldGroupName
+			  shortDescription
+			  soundcloudUrl
+			  youtubeUrl
+			  __typename
+			}
+			featuredImage {
+			  altText
+			  sourceUrl(size: THUMBNAIL)
+			  __typename
+			}
+			__typename
+		  }
+		  __typename
+		}
+	  }';
+	
+	$settingsQuery = '{
+	ortalioSettingBy(slug: "site-global-data") {
+	  ortalioSettingsField {
+		metaDescription
+		metaKeywords
+		metaTitle
+		siteDescription
+		siteIntro
+		siteTitle
+		__typename
+	  }
+	  __typename
+	}
+	}';
+	
+	$socialMediaQuery = '{
+		ortalioSocialMedia(first: 20) {
+		  nodes {
+			ortalioSocialMediaField {
+			  url
+			  __typename
+			}
+			featuredImage {
+			  altText
+			  sourceUrl
+			  __typename
+			}
+			__typename
+		  }
+		  __typename
+		}
+	  }';
+
+	$query = trim(preg_replace('/[\s]+/', ' ', $query));
+	$isOrtalioMediaQuery = trim($query) === trim(preg_replace('/[\s]+/', ' ', $ortalioMediaQuery));
+	$isSettingsQuery = trim($query) === trim(preg_replace('/[\s]+/', ' ', $settingsQuery));
+	$isSocialMediaQuery = trim($query) === trim(preg_replace('/[\s]+/', ' ', $socialMediaQuery));
+
+	if (!$isOrtalioMediaQuery && !$isSettingsQuery && !$isSocialMediaQuery) {
+		die;
+	}
+}
