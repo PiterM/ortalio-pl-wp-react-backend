@@ -1,4 +1,5 @@
 <?php
+die;
 /**
  * The main template file
  *
