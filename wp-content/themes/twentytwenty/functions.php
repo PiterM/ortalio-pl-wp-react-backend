@@ -863,6 +863,6 @@ function allow_only_my_queries( $query ) {
 
 function add_cors_http_header(){
 	header("Access-Control-Allow-Origin: *");
-	header("Access-Control-Allow-Methods: GET, OPTIONS");
+	header("Access-Control-Allow-Methods: GET, OPTIONS, POST, PUT");
 }
 add_action('init','add_cors_http_header');
