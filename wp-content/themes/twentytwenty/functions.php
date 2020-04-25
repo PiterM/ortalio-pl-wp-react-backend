@@ -861,8 +861,9 @@ function allow_only_my_queries( $query ) {
 	}
 }
 
-function add_cors_http_header(){
-	header("Access-Control-Allow-Origin: *");
-	header("Access-Control-Allow-Methods: GET, OPTIONS, POST, PUT");
-}
-add_action('init','add_cors_http_header');
+// function add_cors_http_header(){
+// 	header("Access-Control-Allow-Origin: https://ortalio.pl");
+// 	header("Access-Control-Allow-Methods: GET, OPTIONS, POST, PUT, HEAD");
+// 	header("Access-Control-Allow-Headers: origin, x-requested-with, content-type, content-length");
+// }
+// add_action('init','add_cors_http_header');
