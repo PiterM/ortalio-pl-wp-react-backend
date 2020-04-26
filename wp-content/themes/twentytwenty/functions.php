@@ -795,21 +795,24 @@ function allow_only_my_queries( $query ) {
 
 	$ortalioMediaQuery = '{
 		ortalioMedia(first: 100) {
-		  nodes {
-			id
-			slug
-			ortalioMediaField {
-			  title
-			  content
-			  fieldGroupName
-			  shortDescription
-			  soundcloudUrl
-			  youtubeUrl
-			  __typename
-			}
-			featuredImage {
-			  altText
-			  sourceUrl(size: THUMBNAIL)
+		  edges {
+			node {
+			  id
+			  slug
+			  ortalioMediaField {
+				title
+				content
+				fieldGroupName
+				shortDescription
+				soundcloudUrl
+				youtubeUrl
+				__typename
+			  }
+			  featuredImage {
+				altText
+				sourceUrl(size: THUMBNAIL)
+				__typename
+			  }
 			  __typename
 			}
 			__typename
@@ -835,14 +838,17 @@ function allow_only_my_queries( $query ) {
 	
 	$socialMediaQuery = '{
 		ortalioSocialMedia(first: 20) {
-		  nodes {
-			ortalioSocialMediaField {
-			  url
-			  __typename
-			}
-			featuredImage {
-			  altText
-			  sourceUrl
+		  edges {
+			node {
+			  ortalioSocialMediaField {
+				url
+				__typename
+			  }
+			  featuredImage {
+				altText
+				sourceUrl
+				__typename
+			  }
 			  __typename
 			}
 			__typename
