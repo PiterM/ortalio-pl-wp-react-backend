@@ -767,7 +767,7 @@ add_filter('register_post_type_args', function( $args, $post_type) {
 			$args['graphql_single_name'] = 'OrtalioMedia';
 			$args['graphql_plural_name'] = 'OrtalioMedia';
 			break;
-		case 'ortalio_setting':
+		case 'ortalio_settings':
 			$args['show_in_graphql'] = true;
 			$args['graphql_single_name'] = 'OrtalioSetting';
 			$args['graphql_plural_name'] = 'OrtalioSetting';
