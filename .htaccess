@@ -9,6 +9,6 @@ RewriteRule . /index.php [L]
 
 <IfModule mod_headers.c>
     Header set Access-Control-Allow-Origin "*"
-    Header set Access-Control-Allow-Headers "origin, x-requested-with, content-type, content-length"
-    Header set Access-Control-Allow-Methods "PUT, GET, POST, DELETE, OPTIONS, HEAD"
+    Header set Access-Control-Allow-Headers "origin, x-requested-with, content-type, content-length, fetch"
+    Header set Access-Control-Allow-Methods "POST, OPTIONS"
 </IfModule>
