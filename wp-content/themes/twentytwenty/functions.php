@@ -793,77 +793,10 @@ function allow_only_my_queries( $query ) {
 		return;
 	}
 
-	$ortalioMediaQuery = '{
-		ortalioMedia(first: 100) {
-		  edges {
-			node {
-			  id
-			  slug
-			  ortalioMediaField {
-				title
-				content
-				fieldGroupName
-				shortDescription
-				soundcloudUrl
-				youtubeUrl
-				__typename
-			  }
-			  featuredImage {
-				altText
-				sourceUrl(size: THUMBNAIL)
-				__typename
-			  }
-			  __typename
-			}
-			__typename
-		  }
-		  __typename
-		}
-	  }';
-	
-	$settingsQuery = '{
-	ortalioSettingBy(slug: "site-global-data") {
-	  ortalioSettingsField {
-		metaDescription
-		metaKeywords
-		metaTitle
-		siteDescription
-		siteIntro
-		siteTitle
-		__typename
-	  }
-	  __typename
-	}
-	}';
-	
-	$socialMediaQuery = '{
-		ortalioSocialMedia(first: 20) {
-		  edges {
-			node {
-			  ortalioSocialMediaField {
-				url
-				__typename
-			  }
-			  featuredImage {
-				altText
-				sourceUrl
-				__typename
-			  }
-			  __typename
-			}
-			__typename
-		  }
-		  __typename
-		}
-	  }';
-
+	$fullQuery = '{ ortalioMedia(first: 100) { edges { node { id slug ortalioMediaField { title content fieldGroupName shortDescription soundcloudUrl youtubeUrl __typename } featuredImage { altText sourceUrl(size: THUMBNAIL) __typename } __typename } __typename } __typename } ortalioSettingBy(slug: "site-global-data") { ortalioSettingsField { metaDescription metaKeywords metaTitle siteDescription siteIntro siteTitle __typename } __typename } ortalioSocialMedia(first: 20) { edges { node { ortalioSocialMediaField { url __typename } featuredImage { altText sourceUrl __typename } __typename } __typename } __typename } }';
 	$query = trim(preg_replace('/[\s]+/', ' ', $query));
-	$isOrtalioMediaQuery = trim($query) === trim(preg_replace('/[\s]+/', ' ', $ortalioMediaQuery));
-	$isSettingsQuery = trim($query) === trim(preg_replace('/[\s]+/', ' ', $settingsQuery));
-	$isSocialMediaQuery = trim($query) === trim(preg_replace('/[\s]+/', ' ', $socialMediaQuery));
-
-	if (!$isOrtalioMediaQuery && !$isSettingsQuery && !$isSocialMediaQuery) {
-		die;
+	if (trim($query) !== $fullQuery) {
+		throw(new Error('Sorry Winnetou.'));
 	}
 }
 
