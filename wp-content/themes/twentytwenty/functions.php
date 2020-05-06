@@ -806,3 +806,81 @@ function allow_only_my_queries( $query ) {
 // 	header("Access-Control-Allow-Headers: origin, x-requested-with, content-type, content-length");
 // }
 // add_action('init','add_cors_http_header');
+
+function update_ortalio_media_status() {
+	if (ORTALIO_MEDIA_UPDATE_TOKEN !== $_REQUEST['checkItOutParam']) {
+		return;
+	}
+	update_ortalio_media();
+}
+add_action('init', 'update_ortalio_media_status');
+
+function update_ortalio_media() {
+	$args = array(  
+        'post_type' => 'ortalio_media',
+		'posts_per_page' => -1, 
+		'post_status' => 'all'
+    );
+
+	$loop = new WP_Query( $args ); 
+
+	while ( $loop->have_posts() ) : $loop->the_post(); 
+		$newPostStatus = get_new_media_status(get_the_ID());
+		if ($newPostStatus !== get_post_status(get_the_ID())) {
+			echo get_the_title($post->ID) . ' :: STATUS set to <strong>' . $newPostStatus . '</strong><br/>';
+			wp_update_post([
+				'ID' => get_the_ID(),
+				'post_status' => $newPostStatus
+			]);
+		} else {
+			echo get_the_title($post->ID) . ' :: no status change: <strong>' . get_post_status(get_the_ID()) . '</strong><br/>';
+		}
+		echo '<br/>';
+
+	endwhile;
+	
+    wp_reset_postdata(); 
+}
+
+function get_new_media_status($postId) {
+	$soundcloudUrl = get_field('soundcloud_url', $postId);
+	$youtubeUrl = get_field('youtube_url', $postId);
+	$isWrongSoundcloudUrl = false;
+	$isWrongYoutubeUrl = false;
+
+	if (!isset($youtubeUrl) && !isset($soundcloudUrl)) {
+		return 'draft';
+	}
+
+    if (isset($soundcloudUrl)) {
+		$response = wp_remote_get($soundcloudUrl);
+		if (is_wp_error($response) || wp_remote_retrieve_response_code($response) === 404) {
+			$isWrongSoundcloudUrl = true;
+			echo get_the_title($postId) . ' :: Soundcloud URL is BROKEN<br/>';
+		} else {
+			echo get_the_title($postId) . ' :: Soundcloud URL is READY<br/>';
+		}
+	}
+
+	if (isset($youtubeUrl)) {
+		$response = wp_remote_get($youtubeUrl);
+		if (is_wp_error($response) || isYoutubePage404(
+				wp_remote_retrieve_body($response), get_the_title($postId)
+			) ||  wp_remote_retrieve_response_code($response) === 404) {
+			$isWrongYoutubeUrl = true;
+			echo get_the_title($postId) . ' :: YouTube URL is BROKEN<br/>';
+		} else {
+			echo get_the_title($postId) . ' :: YouTube URL is READY<br/>';
+		}
+	}
+
+	return $isWrongSoundcloudUrl && $isWrongYoutubeUrl 
+		? 'draft'
+		: 'publish';
+}
+
+function isYoutubePage404($responseBody, $trackTitle) {
+	$trackTitle = preg_replace(['/&/', '/–/'], ['&amp;', '-'], html_entity_decode($trackTitle));
+	return preg_match("/<h1 id=\"unavailable-message\"[^>]*>/", $responseBody) &&
+		strpos($responseBody, $trackTitle) === false;
+}
