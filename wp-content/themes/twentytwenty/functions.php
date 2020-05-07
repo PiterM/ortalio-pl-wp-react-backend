@@ -819,7 +819,7 @@ function update_ortalio_media() {
 	$args = array(  
         'post_type' => 'ortalio_media',
 		'posts_per_page' => -1, 
-		'post_status' => 'all'
+		'post_status' => ['publish', 'draft']
     );
 
 	$loop = new WP_Query( $args ); 
